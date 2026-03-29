@@ -6,13 +6,10 @@ Deterministic baseline controllers for the car-following task.
 Implemented controllers
 -----------------------
 1. PIDController
-   Fixed-gap PID with anti-windup.  Competes against PPO agents.
+2. PPOController
+3. HybridContextPIDController
 
-2. ConstantSpeedController
-   Echo of lead speed — useful as a sanity-check / lower bound.
-
-Both controllers share the same ``act(obs, info)`` interface so they can
-be dropped into the evaluation loop without modification.
+Both controllers expose ``act(state) -> action`` with optional ``info``.
 
         # PID design
         # ----------
@@ -49,17 +46,13 @@ class BaseController:
     def reset(self) -> None:
         """Reset any internal state at the start of a new episode."""
 
-    def act(
-        self,
-        obs: np.ndarray,
-        info: Optional[Dict[str, Any]] = None,
-    ) -> np.ndarray:
+    def act(self, state: np.ndarray, info: Optional[Dict[str, Any]] = None) -> np.ndarray:
         """
         Return a single-element action array given the current observation.
 
         Parameters
         ----------
-        obs:
+        state:
             Observation vector from the environment.
         info:
             Optional info dict from the environment (contains raw values).
@@ -115,14 +108,10 @@ class PIDController(BaseController):
         self._prev_error = 0.0
         self._initialized = False
 
-    def act(
-        self,
-        obs: np.ndarray,
-        info: Optional[Dict[str, Any]] = None,
-    ) -> np.ndarray:
+    def act(self, state: np.ndarray, info: Optional[Dict[str, Any]] = None) -> np.ndarray:
         """Compute PID acceleration command from current observation."""
-        gap = float(obs[0])
-        v_ego = float(obs[1])
+        gap = float(state[0])
+        v_ego = float(state[1])
         dt = self.sim.dt
 
         # Desired spacing policy: time-gap + standstill offset.
@@ -171,33 +160,33 @@ class PIDController(BaseController):
         return self._integral
 
 
-# ---------------------------------------------------------------------------
-# Constant-speed controller (sanity check)
-# ---------------------------------------------------------------------------
+class PPOController(BaseController):
+    """Thin wrapper around an SB3 PPO policy with optional obs normalization."""
 
-class ConstantSpeedController(BaseController):
-    """
-    Trivial controller: always commands zero acceleration.
-
-    Useful as a lower bound / sanity check.
-    """
+    def __init__(self, ppo_model: Any, obs_stats: Any = None) -> None:
+        self.model = ppo_model
+        self.obs_stats = obs_stats
 
     def reset(self) -> None:
-        pass
+        # Stateless deterministic policy wrapper.
+        return None
 
-    def act(
-        self,
-        obs: np.ndarray,
-        info: Optional[Dict[str, Any]] = None,
-    ) -> np.ndarray:
-        return np.array([0.0], dtype=np.float32)
+    def act(self, state: np.ndarray, info: Optional[Dict[str, Any]] = None) -> np.ndarray:
+        obs_input = state.copy().astype(np.float32)
+        if self.obs_stats is not None:
+            obs_input = (obs_input - self.obs_stats.mean) / (
+                np.sqrt(self.obs_stats.var + 1e-8)
+            )
+            obs_input = np.clip(obs_input, -10.0, 10.0)
+        action, _ = self.model.predict(obs_input, deterministic=True)
+        return action.astype(np.float32)
 
 
 # ---------------------------------------------------------------------------
 # Hybrid context-PPO + PID safety supervisor
 # ---------------------------------------------------------------------------
 
-class HybridContextPIDController:
+class HybridContextPIDController(BaseController):
     """
         Hybrid supervisor around context_ppo (nominal) and PID (safety).
 
@@ -578,22 +567,22 @@ class HybridContextPIDController:
 
     def act(
         self,
-        obs: np.ndarray,
+        state: np.ndarray,
         info: Optional[Dict[str, Any]] = None,
     ) -> np.ndarray:
         """
         Select an action from context_ppo, protected by a hard safety filter in
         high_risk / emergency modes when physical danger is present.
         """
-        self.compute_risk(obs, info)
+        self.compute_risk(state, info)
         w = self._pid_weight
-        ppo_action = self._ppo_action(obs)
+        ppo_action = self._ppo_action(state)
 
         # Keep low-risk behavior almost identical to context_ppo.
         if w <= 1e-6:
             return ppo_action
 
-        pid_action = self.pid.act(obs, info)
+        pid_action = self.pid.act(state, info)
         action = (1.0 - w) * ppo_action + w * pid_action
 
         if self._mode == "high_risk" and self.cfg.hybrid_filter_enable_high:

@@ -260,8 +260,6 @@ def agent_display_name(agent_type: str) -> str:
         "vanilla_ppo":      "Vanilla PPO",
         "context_ppo":      "Context-Aware PPO",
         "hybrid_context_pid":"Hybrid Context+PID",
-        "ablation_state":   "PPO+Context State",
-        "ablation_reward":  "PPO+Context Reward Only",
     }
     return mapping.get(agent_type, agent_type)
 

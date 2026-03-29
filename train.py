@@ -1,27 +1,12 @@
-"""
-train.py
-========
-Training pipeline for all Stable-Baselines3 PPO agents.
+"""Training pipeline for final trainable PPO controllers.
 
-Agent variants
---------------
-  vanilla_ppo    – PPO on physical state only, vanilla reward
-  context_ppo    – PPO on augmented state, full context-aware reward
-  ablation_state – PPO on augmented state, but vanilla reward
-                   (context in state, NOT in reward)
-    ablation_reward – PPO on physical state only, but context-aware reward
-                                        (context in reward, NOT in state)
-
-All variants are trained across multiple seeds, with observation and reward
-normalisation via SB3's VecNormalize wrapper.
+Trainable controllers
+---------------------
+    vanilla_ppo
+    context_ppo
 
 Trained models and normalisation statistics are saved under:
-  artifacts/models/<agent_type>_seed<N>/
-
-Usage
------
-    from train import train_all
-    train_all(config)
+    artifacts/models/<agent_type>_seed<N>/
 """
 
 from __future__ import annotations
@@ -45,22 +30,14 @@ from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv
 
 from config import Config, PPOConfig
 from env_car_following import CarFollowingEnv, make_env, make_single_env
+from registry import PPO_AGENT_SPECS, TRAINABLE_CONTROLLERS, get_ppo_spec
 from utils import get_logger, set_global_seed, Timer, agent_name
 
 logger = get_logger(__name__)
 
 
-# ---------------------------------------------------------------------------
-# Agent type definitions
-# ---------------------------------------------------------------------------
-
-# Each entry: (use_context_in_state, use_context_reward)
-AGENT_CONFIGS: Dict[str, tuple] = {
-    "vanilla_ppo":   (False, False),
-    "context_ppo":   (True,  True),
-    "ablation_state": (True, False),   # ablation: context in state only
-    "ablation_reward": (False, True),  # ablation: context in reward only
-}
+# Backward-compatible exported name used by existing non-plot modules.
+AGENT_CONFIGS: Dict[str, tuple] = dict(PPO_AGENT_SPECS)
 
 
 # ---------------------------------------------------------------------------
@@ -259,7 +236,7 @@ def train_single_agent(
     Parameters
     ----------
     agent_type:
-        One of ('vanilla_ppo', 'context_ppo', 'ablation_state', 'ablation_reward').
+        One of ('vanilla_ppo', 'context_ppo').
     seed:
         Random seed for reproducibility.
     config:
@@ -270,7 +247,7 @@ def train_single_agent(
     Path
         Directory where the model and VecNormalize stats are saved.
     """
-    use_context, use_context_reward = AGENT_CONFIGS[agent_type]
+    use_context, use_context_reward = get_ppo_spec(agent_type)
     ppo_cfg = config.ppo
     paths = config.paths
 
@@ -380,7 +357,7 @@ def train_agent_all_seeds(
     Parameters
     ----------
     agent_type:
-        One of ('vanilla_ppo', 'context_ppo', 'ablation_state', 'ablation_reward').
+        One of ('vanilla_ppo', 'context_ppo').
     config:
         Master Config dataclass.
     seeds:
@@ -391,6 +368,12 @@ def train_agent_all_seeds(
     List[Path]
         Saved model directories, one per seed.
     """
+    if agent_type not in TRAINABLE_CONTROLLERS:
+        allowed = ", ".join(TRAINABLE_CONTROLLERS)
+        raise ValueError(
+            f"Unknown controller for training: {agent_type}. Allowed: {allowed}."
+        )
+
     seeds = seeds or config.ppo.seeds
     model_dirs: List[Path] = []
     for seed in seeds:
@@ -401,7 +384,7 @@ def train_agent_all_seeds(
 
 def train_all(config: Config) -> None:
     """
-    Train ALL agent variants (vanilla_ppo, context_ppo, ablation_state, ablation_reward)
+    Train all final trainable controllers (vanilla_ppo, context_ppo)
     across all seeds specified in config.ppo.seeds.
     """
     logger.info("=" * 60)
@@ -410,7 +393,7 @@ def train_all(config: Config) -> None:
     logger.info(f"  Total timesteps: {config.ppo.total_timesteps:,}")
     logger.info("=" * 60)
 
-    for agent_type in AGENT_CONFIGS:
+    for agent_type in TRAINABLE_CONTROLLERS:
         logger.info(f"\n{'─'*60}")
         logger.info(f"Agent: {agent_type}")
         logger.info(f"{'─'*60}")
@@ -436,7 +419,7 @@ def load_trained_model(
     -------
     (model, vecnorm_stats_path)
     """
-    use_context, use_context_reward = AGENT_CONFIGS[agent_type]
+    use_context, use_context_reward = get_ppo_spec(agent_type)
     model_dir = config.paths.models / agent_name(agent_type, seed)
     best_model_path = model_dir / "best_model.zip"
     final_model_path = model_dir / "final_model.zip"
@@ -448,9 +431,11 @@ def load_trained_model(
     elif final_model_path.exists():
         model_path = final_model_path
     else:
+        allowed = ", ".join(TRAINABLE_CONTROLLERS)
         raise FileNotFoundError(
-            f"No trained model found for {agent_type}/seed={seed} in {model_dir}.\n"
-            f"Run 'python main.py train' first."
+            f"Missing trained model for '{agent_type}' (seed={seed}) in {model_dir}.\n"
+            f"Train first with: python main.py train --agents {agent_type} --seeds {seed}\n"
+            f"Allowed trainable controllers: {allowed}."
         )
 
     model = PPO.load(str(model_path))

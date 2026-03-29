@@ -1,9 +1,7 @@
-"""
-evaluate.py
-===========
-Evaluation pipeline: runs each controller (PID, vanilla_ppo, context_ppo,
-ablation_state, ablation_reward) across all scenarios and seeds, computes
-metrics, and saves CSV results.
+"""Evaluation pipeline for the final four-controller system.
+
+Runs PID, vanilla_ppo, context_ppo, and hybrid_context_pid across
+configured scenarios and seeds, computes metrics, and saves CSV results.
 
 Metrics computed per episode
 -----------------------------
@@ -45,18 +43,16 @@ import numpy as np
 import pandas as pd
 
 from config import Config, SimConfig
-from controllers import PIDController, run_pid_episode, HybridContextPIDController
+from controllers import PIDController, PPOController, run_pid_episode, HybridContextPIDController
 from env_car_following import CarFollowingEnv, make_single_env
-from train import AGENT_CONFIGS, load_trained_model
+from registry import ALL_CONTROLLERS, TRAINABLE_CONTROLLERS, validate_controllers
+from train import load_trained_model
 from utils import (
     get_logger,
     set_global_seed,
     mean_std,
     compute_normalised_scores,
     aggregate_radar_scores,
-    save_dict_as_csv,
-    dataframe_summary,
-    agent_name,
     agent_display_name,
 )
 
@@ -376,38 +372,30 @@ def compute_episode_metrics(
 # Agent rollout runners
 # ---------------------------------------------------------------------------
 
+def _load_obs_stats(vecnorm_path: Optional[Path]) -> Any:
+    """Load VecNormalize observation statistics from disk when available."""
+    if vecnorm_path is None or not vecnorm_path.exists():
+        return None
+    with open(str(vecnorm_path), "rb") as fh:
+        stats = pickle.load(fh)
+        return getattr(stats, "obs_rms", None)
+
+
 def _run_ppo_episode(
-    model,
+    controller: PPOController,
     env: CarFollowingEnv,
-    vecnorm_path: Optional[Path],
     seed: int,
 ) -> Tuple[float, List[Dict[str, Any]]]:
     """
-    Run one episode with a PPO model, returning (return, trajectory).
-    Applies observation normalisation if vecnorm_stats are available.
+    Run one episode with a PPO controller, returning (return, trajectory).
     """
-    obs_stats = None
-    if vecnorm_path is not None and vecnorm_path.exists():
-        with open(str(vecnorm_path), "rb") as fh:
-            stats = pickle.load(fh)
-            # VecNormalize pickle contains obs_rms, ret_rms
-            obs_stats = getattr(stats, "obs_rms", None)
-
     obs, info = env.reset(seed=seed)
     trajectory = [info]
     episode_return = 0.0
     done = False
 
     while not done:
-        # Apply normalisation if available
-        obs_input = obs.copy()
-        if obs_stats is not None:
-            obs_input = (obs_input - obs_stats.mean) / (
-                np.sqrt(obs_stats.var + 1e-8)
-            )
-            obs_input = np.clip(obs_input, -10.0, 10.0)
-
-        action, _ = model.predict(obs_input, deterministic=True)
+        action = controller.act(obs, info)
         obs, reward, terminated, truncated, info = env.step(action)
         info["reward"] = float(reward)
         episode_return += reward
@@ -510,6 +498,7 @@ def evaluate_agent(
         One row per episode with columns:
         agent, seed, scenario, episode_idx, + all metric columns.
     """
+    validate_controllers([agent_type], allow=ALL_CONTROLLERS, context="evaluation")
     seeds = seeds or config.eval.eval_seeds
     n_ep = n_episodes_per_scenario or config.eval.episodes_per_scenario
     rows: List[Dict[str, Any]] = []
@@ -522,6 +511,7 @@ def evaluate_agent(
         # Load PPO model if needed.
         # For hybrid_context_pid we load context_ppo's weights (the nominal policy).
         model = vecnorm_path = use_context = use_context_reward = None
+        ppo_controller: Optional[PPOController] = None
         hybrid_controller = None
         if agent_type not in ("pid",):
             model_key = "context_ppo" if agent_type == "hybrid_context_pid" else agent_type
@@ -530,20 +520,18 @@ def evaluate_agent(
                     model_key, seed, config
                 )
             except FileNotFoundError as exc:
-                logger.warning(str(exc))
-                continue
+                raise FileNotFoundError(
+                    f"Model missing for evaluation agent '{agent_type}' (seed={seed}). {exc}"
+                ) from exc
+
+            ppo_controller = PPOController(model, _load_obs_stats(vecnorm_path))
 
             # Build hybrid controller once per seed; reuse across all episodes.
             # VecNormalize obs_rms loaded here (once) rather than per episode.
             if agent_type == "hybrid_context_pid":
-                obs_stats = None
-                if vecnorm_path is not None and vecnorm_path.exists():
-                    with open(str(vecnorm_path), "rb") as fh:
-                        stats = pickle.load(fh)
-                        obs_stats = getattr(stats, "obs_rms", None)
                 pid_ctrl = PIDController(config.pid, config.sim)
                 hybrid_controller = HybridContextPIDController(
-                    model, pid_ctrl, obs_stats, config.hybrid
+                    model, pid_ctrl, ppo_controller.obs_stats, config.hybrid
                 )
 
         for scenario_name in EVAL_SCENARIOS:
@@ -566,7 +554,7 @@ def evaluate_agent(
                         scenario=scenario_name,
                         normalize_observation=True,
                     )
-                    _, traj = _run_ppo_episode(model, env, vecnorm_path, seed=ep_seed)
+                    _, traj = _run_ppo_episode(ppo_controller, env, seed=ep_seed)
                     env.close()
 
                 metrics = compute_episode_metrics(
@@ -589,7 +577,7 @@ def evaluate_agent(
 # Full evaluation pipeline
 # ---------------------------------------------------------------------------
 
-AGENT_TYPES = ["pid", "vanilla_ppo", "context_ppo", "hybrid_context_pid"]
+AGENT_TYPES = list(ALL_CONTROLLERS)
 
 
 def evaluate_all(config: Config) -> Dict[str, pd.DataFrame]:
@@ -626,6 +614,20 @@ def evaluate_all(config: Config) -> Dict[str, pd.DataFrame]:
         _save_aggregate(all_dfs, config)
 
     return all_dfs
+
+
+def _write_csv(df: pd.DataFrame, path: "Path", label: str) -> None:
+    """Write *df* to *path*, falling back to a temp file if the target is locked."""
+    try:
+        df.to_csv(path, index=False)
+        logger.info(f"{label} → {path}")
+    except PermissionError:
+        alt = path.with_name(path.stem + "_new" + path.suffix)
+        df.to_csv(alt, index=False)
+        logger.warning(
+            f"[PermissionError] Cannot write to {path.name} (file may be open in another program). "
+            f"Saved to {alt.name} instead. Close the file and rename it manually."
+        )
 
 
 def _save_aggregate(
@@ -684,13 +686,11 @@ def _save_aggregate(
 
     agg_df = pd.DataFrame(agg_rows)
     agg_path = config.paths.results / "aggregate_metrics.csv"
-    agg_df.to_csv(agg_path, index=False)
-    logger.info(f"Aggregate metrics → {agg_path}")
+    _write_csv(agg_df, agg_path, "Aggregate metrics")
 
     radar_df = pd.DataFrame(radar_rows)
     radar_path = config.paths.results / "radar_scores.csv"
-    radar_df.to_csv(radar_path, index=False)
-    logger.info(f"Radar scores → {radar_path}")
+    _write_csv(radar_df, radar_path, "Radar scores")
 
     # Console summary
     _print_summary(agg_df, radar_df)
@@ -921,11 +921,7 @@ def record_trajectory(
         # and wrap it with PID safety supervisor.
         model, vecnorm_path, _, _ = load_trained_model("context_ppo", seed, config)
 
-        obs_stats = None
-        if vecnorm_path is not None and vecnorm_path.exists():
-            with open(str(vecnorm_path), "rb") as fh:
-                stats = pickle.load(fh)
-                obs_stats = getattr(stats, "obs_rms", None)
+        obs_stats = _load_obs_stats(vecnorm_path)
 
         pid_ctrl = PIDController(config.pid, config.sim)
         hybrid = HybridContextPIDController(model, pid_ctrl, obs_stats, config.hybrid)
@@ -944,7 +940,8 @@ def record_trajectory(
         scenario=scenario,
         normalize_observation=True,
     )
-    _, traj = _run_ppo_episode(model, env, vecnorm_path, seed=seed)
+    ppo_controller = PPOController(model, _load_obs_stats(vecnorm_path))
+    _, traj = _run_ppo_episode(ppo_controller, env, seed=seed)
     env.close()
     return traj
 
@@ -1017,7 +1014,7 @@ def run_context_sensitivity_diagnostics(
     ]
 
     rows: List[Dict[str, Any]] = []
-    for agent_type in ["vanilla_ppo", "ablation_state", "ablation_reward", "context_ppo"]:
+    for agent_type in list(TRAINABLE_CONTROLLERS):
         try:
             model, vecnorm_path, use_context, _ = load_trained_model(agent_type, seed, config)
         except FileNotFoundError:
@@ -1089,6 +1086,7 @@ def evaluate_showcase(
     """
     config.paths.make_dirs()
     agents = agents or ["pid", "vanilla_ppo", "context_ppo"]
+    validate_controllers(agents, allow=ALL_CONTROLLERS, context="showcase evaluation")
     seeds = seeds or config.eval.showcase_seeds
     n_ep = n_episodes_per_case or config.eval.showcase_episodes_per_case
     cases = get_showcase_cases(include_optional_escalation=include_optional_escalation)
@@ -1102,6 +1100,7 @@ def evaluate_showcase(
             set_global_seed(seed)
 
             model = vecnorm_path = use_context = use_context_reward = None
+            ppo_controller: Optional[PPOController] = None
             if agent_type != "pid":
                 try:
                     model, vecnorm_path, use_context, use_context_reward = load_trained_model(
@@ -1110,6 +1109,7 @@ def evaluate_showcase(
                 except FileNotFoundError as exc:
                     logger.warning(str(exc))
                     continue
+                ppo_controller = PPOController(model, _load_obs_stats(vecnorm_path))
 
             for case_idx, case_id in enumerate(case_ids):
                 case_def = cases[case_id]
@@ -1142,7 +1142,7 @@ def evaluate_showcase(
                             lead_profile=lead_profile,
                             normalize_observation=True,
                         )
-                        _, traj = _run_ppo_episode(model, env, vecnorm_path, seed=ep_seed)
+                        _, traj = _run_ppo_episode(ppo_controller, env, seed=ep_seed)
                         env.close()
 
                     metrics = compute_episode_metrics(trajectory=traj[1:], cfg_sim=config.sim)
@@ -1261,7 +1261,7 @@ def _save_showcase_reports(df: pd.DataFrame, config: Config) -> None:
         ]
         if ctx_vals.empty:
             continue
-        for opponent in ["pid", "vanilla_ppo", "ablation_state", "ablation_reward"]:
+        for opponent in ["pid", "vanilla_ppo", "hybrid_context_pid"]:
             opp_vals = case_metric_means[
                 (case_metric_means["case_id"] == case_id) & (case_metric_means["agent"] == opponent)
             ]
