@@ -1,7 +1,7 @@
 """
 context_model.py
 ================
-Synthetic Human-State Simulator + Structured "LLM-like" Context Interpreter.
+Synthetic Human-State Simulator + Rule-Based Context Interpreter.
 
 Architecture
 ------------
@@ -216,7 +216,7 @@ class PhysiologicalSignalGenerator:
 
 
 # ---------------------------------------------------------------------------
-# Structured "LLM-like" context interpreter
+# Structured context interpreter
 # ---------------------------------------------------------------------------
 
 class ContextInterpreter:

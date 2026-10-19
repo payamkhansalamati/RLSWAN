@@ -41,6 +41,7 @@ def build_parser() -> argparse.ArgumentParser:
     train_p.add_argument("--seeds", type=int, nargs="+", default=None)
     train_p.add_argument("--timesteps", type=int, default=None)
     train_p.add_argument("--n_envs", type=int, default=None)
+    train_p.add_argument("--checkpoint-eval-episodes", type=int, default=None)
 
     eval_p = subparsers.add_parser("evaluate", help="Evaluate controllers.")
     eval_p.add_argument(
@@ -50,7 +51,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Controllers to evaluate.",
     )
     eval_p.add_argument("--seeds", type=int, nargs="+", default=None)
-    eval_p.add_argument("--n_episodes", type=int, default=None)
+    eval_p.add_argument(
+        "--episodes-per-scenario",
+        "--n_episodes",
+        dest="episodes_per_scenario",
+        type=int,
+        default=None,
+        help="Final evaluation episodes per scenario.",
+    )
 
     plot_p = subparsers.add_parser("plot", help="Generate plots.")
     plot_p.add_argument("--no_traj", action="store_true")
@@ -60,7 +68,8 @@ def build_parser() -> argparse.ArgumentParser:
     all_p.add_argument("--seeds", type=int, nargs="+", default=None)
     all_p.add_argument("--timesteps", type=int, default=None)
     all_p.add_argument("--n_envs", type=int, default=None)
-    all_p.add_argument("--n_episodes", type=int, default=None)
+    all_p.add_argument("--checkpoint-eval-episodes", type=int, default=None)
+    all_p.add_argument("--episodes-per-scenario", type=int, default=None)
 
     return parser
 
@@ -69,7 +78,10 @@ def apply_overrides(config: Config, args: argparse.Namespace) -> Config:
     seeds = getattr(args, "seeds", None)
     timesteps = getattr(args, "timesteps", None)
     n_envs = getattr(args, "n_envs", None)
-    n_episodes = getattr(args, "n_episodes", None)
+    checkpoint_eval_episodes = getattr(args, "checkpoint_eval_episodes", None)
+    episodes_per_scenario = getattr(
+        args, "episodes_per_scenario", getattr(args, "n_episodes", None)
+    )
 
     if seeds is not None:
         config.ppo.seeds = list(seeds)
@@ -78,8 +90,14 @@ def apply_overrides(config: Config, args: argparse.Namespace) -> Config:
         config.ppo.total_timesteps = int(timesteps)
     if n_envs is not None:
         config.ppo.n_envs = int(n_envs)
-    if n_episodes is not None:
-        config.eval.episodes_per_scenario = int(n_episodes)
+    if checkpoint_eval_episodes is not None:
+        if checkpoint_eval_episodes < 1:
+            raise ValueError("--checkpoint-eval-episodes must be at least 1.")
+        config.ppo.checkpoint_eval_episodes = int(checkpoint_eval_episodes)
+    if episodes_per_scenario is not None:
+        if episodes_per_scenario < 1:
+            raise ValueError("--episodes-per-scenario must be at least 1.")
+        config.eval.episodes_per_scenario = int(episodes_per_scenario)
     return config
 
 

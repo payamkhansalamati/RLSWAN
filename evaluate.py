@@ -500,7 +500,13 @@ def evaluate_agent(
     """
     validate_controllers([agent_type], allow=ALL_CONTROLLERS, context="evaluation")
     seeds = seeds or config.eval.eval_seeds
-    n_ep = n_episodes_per_scenario or config.eval.episodes_per_scenario
+    n_ep = (
+        config.eval.episodes_per_scenario
+        if n_episodes_per_scenario is None
+        else n_episodes_per_scenario
+    )
+    if n_ep < 1:
+        raise ValueError("Evaluation episodes per scenario must be at least 1.")
     rows: List[Dict[str, Any]] = []
     scenario_order = list(EVAL_SCENARIOS.keys())
 

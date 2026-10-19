@@ -250,6 +250,8 @@ def train_single_agent(
     use_context, use_context_reward = get_ppo_spec(agent_type)
     ppo_cfg = config.ppo
     paths = config.paths
+    if ppo_cfg.checkpoint_eval_episodes < 1:
+        raise ValueError("ppo.checkpoint_eval_episodes must be at least 1.")
 
     set_global_seed(seed)
 
@@ -314,7 +316,7 @@ def train_single_agent(
         best_model_save_path=str(model_dir),
         log_path=str(model_dir),
         eval_freq=max(1, ppo_cfg.total_timesteps // (10 * ppo_cfg.n_envs)),
-        n_eval_episodes=5,
+        n_eval_episodes=ppo_cfg.checkpoint_eval_episodes,
         deterministic=True,
         render=False,
         verbose=0,

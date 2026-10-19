@@ -435,9 +435,14 @@ class HybridConfig:
 
 @dataclass
 class PPOConfig:
-    """Stable-Baselines3 PPO hyperparameters and training settings."""
+    """Stable-Baselines3 PPO hyperparameters and training settings.
+
+    ``checkpoint_eval_episodes`` controls each training-time evaluation used
+    to select ``best_model.zip``; it is independent of final evaluation size.
+    """
     total_timesteps: int = 500_000      # total environment steps per run
     n_envs: int = 8                     # parallel training environments
+    checkpoint_eval_episodes: int = 5   # episodes per evaluation during training
     n_steps: int = 2048                 # rollout steps per env before update
     batch_size: int = 256
     n_epochs: int = 10
@@ -463,8 +468,7 @@ class PPOConfig:
 
 @dataclass
 class EvalConfig:
-    """Evaluation settings."""
-    n_eval_episodes: int = 50          # evaluation episodes per seed
+    """Final evaluation settings, separate from checkpoint selection."""
     # eval_seeds must match the model training seeds so load_trained_model
     # can locate the saved checkpoint for each seed.
     eval_seeds: List[int] = field(default_factory=lambda: [0, 1, 2, 3, 4])
@@ -474,7 +478,7 @@ class EvalConfig:
         "fatigued",
         "switching",
     ])
-    episodes_per_scenario: int = 50    # episodes per eval scenario (robust stats)
+    episodes_per_scenario: int = 50    # final evaluation episodes per scenario
     showcase_seeds: List[int] = field(default_factory=lambda: [700, 701, 702, 703, 704])
     showcase_episodes_per_case: int = 4
 
