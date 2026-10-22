@@ -1,0 +1,22 @@
+{
+  "dimensions": [
+    1920,
+    1080
+  ],
+  "duration_video_seconds": 50.0,
+  "fps": 30,
+  "frame_count": 1500,
+  "frame_time_mapping": "Each output frame represents a 1/30 s video interval; its midpoint samples the corresponding recorded simulation time at 5x.",
+  "longitudinal_display": "Linear 1:1 metre scale; the simulation's configured 100 m gap limit is explicitly labeled when reached. No renderer gap cap is applied.",
+  "output": "animations/rendered/animation1_five_profiles_presentation.mp4",
+  "playback_rate": "5x; each 10 s scene resamples its full 0\u201350 s recorded episode",
+  "profile_order": [
+    "constant",
+    "sinusoidal",
+    "braking",
+    "stop_and_go",
+    "random_smooth"
+  ],
+  "profile_scene_simulation_seconds": 50.0,
+  "profile_scene_video_seconds": 10.0
+}

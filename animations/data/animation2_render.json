@@ -1,0 +1,13 @@
+{
+  "criterion": "Failure: at least one evaluation TTC proxy < 3.0 s. Safe for this illustrative comparison: zero TTC violations and zero collision steps (collision is gap <= collision_gap).",
+  "dimensions": [
+    1920,
+    1080
+  ],
+  "duration_simulation_seconds": 50.0,
+  "fps": 30,
+  "frame_count": 1501,
+  "playback": "30 fps output; synchronized simulation-time playback",
+  "status": "verified_ttc_violation_contrast",
+  "terminal_state_hold": "A policy ending early is held at its terminal state and explicitly labeled."
+}

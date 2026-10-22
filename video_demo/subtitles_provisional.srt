@@ -1,0 +1,23 @@
+1
+00:00:00,300 --> 00:00:05,800
+What if a robot could adapt to signs that someone needs a gentler pace?
+
+2
+00:00:21,100 --> 00:00:24,800
+Would you prefer a little more space and a gentler pace?
+
+3
+00:00:25,100 --> 00:00:28,400
+Yes, please. It's been a long shift.
+
+4
+00:00:30,000 --> 00:00:35,500
+Understood. I'll give you more room and move more gently.
+
+5
+00:00:46,100 --> 00:00:49,400
+Thank you. That's much better.
+
+6
+00:00:50,100 --> 00:00:55,800
+Human context informs the controller's priorities, while safety limits remain active.

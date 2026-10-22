@@ -1,0 +1,3 @@
+# Install after requirements.txt in the project virtual environment.
+imageio>=2.31
+imageio-ffmpeg>=0.4.9

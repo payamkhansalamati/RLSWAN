@@ -1,0 +1,29 @@
+{
+  "worker": {
+    "voice_id": "EXAVITQu4vr4xnSDxMaL",
+    "name": "Sarah - Mature, Reassuring, Confident",
+    "category": "premade",
+    "settings": {
+      "stability": 0.48,
+      "similarity_boost": 0.75,
+      "style": 0.12,
+      "use_speaker_boost": true,
+      "speed": 1.0
+    }
+  },
+  "robot": {
+    "voice_id": "SAz9YHcvj6GT2YYXdXww",
+    "name": "River - Relaxed, Neutral, Informative",
+    "category": "premade",
+    "settings": {
+      "stability": 0.6,
+      "similarity_boost": 0.75,
+      "style": 0.05,
+      "use_speaker_boost": true,
+      "speed": 1.0
+    }
+  },
+  "selection_basis": "Stock voice metadata and downloaded existing previews; no cloning or imitation. Auditory quality review is pending because this runtime cannot receive audio input.",
+  "tts_model_id": "eleven_multilingual_v2",
+  "auditory_review_complete": false
+}

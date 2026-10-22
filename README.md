@@ -186,6 +186,16 @@ python main.py all
 `all` uses the same independent checkpoint-selection and final-evaluation
 settings described above.
 
+## Presentation animations
+
+The reproducible animation workflow, its generation commands, safety
+definitions, and interpretation limits are documented in
+[animations/README.md](./animations/README.md). It records measured trajectories
+and renders two 1920×1080 MP4s under `animations/rendered/`; checkpoint
+references, seed/config metadata, and per-step CSV data are stored under
+`animations/data/`. The risk-governed controller shown is the implemented
+`hybrid_context_pid` wrapper around `context_ppo`, not a separate PPO model.
+
 ## Reproducibility and limitations
 
 Training and evaluation default to seeds `0` through `4`. The code seeds

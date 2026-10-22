@@ -1,0 +1,388 @@
+{
+  "schema_version": 1,
+  "project": {
+    "title": "Context-aware assistance",
+    "width": 1920,
+    "height": 1080,
+    "fps": 24,
+    "duration": 60.0,
+    "notes": "60-second editorial timing fitted to saved ElevenLabs speech. Picture generation and visual/lip-sync review remain pending. All sources preserved; no still-image substitutes."
+  },
+  "clips": [
+    {
+      "id": "establish",
+      "path": "source_clips/01_establish.mp4",
+      "start": 0,
+      "duration": 6,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null
+    },
+    {
+      "id": "visible_cues",
+      "path": "source_clips/02_visible_cues.mp4",
+      "start": 6,
+      "duration": 3,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null
+    },
+    {
+      "id": "perception",
+      "path": "source_clips/03_perception_monitor.mp4",
+      "start": 9,
+      "duration": 5,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null,
+      "needs_monitor_quad": true,
+      "monitor_aspect_ratio": 2.45
+    },
+    {
+      "id": "analysing",
+      "path": "source_clips/04_analysing_monitor.mp4",
+      "start": 14,
+      "duration": 7,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null,
+      "needs_monitor_quad": true,
+      "monitor_aspect_ratio": 2.45
+    },
+    {
+      "id": "reasoning",
+      "path": "source_clips/05_reasoning_robot.mp4",
+      "start": 21,
+      "duration": 5.5,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null,
+      "needs_monitor_quad": true,
+      "monitor_aspect_ratio": 2.45
+    },
+    {
+      "id": "worker_confirmation",
+      "path": "source_clips/06_worker_confirmation_lipsync.mp4",
+      "start": 26.5,
+      "duration": 2.5,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null,
+      "requires_lipsync": true,
+      "lipsync_verified": false
+    },
+    {
+      "id": "decided",
+      "path": "source_clips/07_decided_monitor.mp4",
+      "start": 29,
+      "duration": 8,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null,
+      "needs_monitor_quad": true,
+      "monitor_aspect_ratio": 2.45
+    },
+    {
+      "id": "working_monitor",
+      "path": "source_clips/08a_working_monitor.mp4",
+      "start": 37,
+      "duration": 3,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null,
+      "needs_monitor_quad": true,
+      "monitor_aspect_ratio": 2.45
+    },
+    {
+      "id": "working",
+      "path": "source_clips/08_working_side.mp4",
+      "start": 40,
+      "duration": 7,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null
+    },
+    {
+      "id": "worker_thanks",
+      "path": "source_clips/09_worker_thanks_lipsync.mp4",
+      "start": 47,
+      "duration": 3,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null,
+      "requires_lipsync": true,
+      "lipsync_verified": false
+    },
+    {
+      "id": "explain",
+      "path": "source_clips/10_explain.mp4",
+      "start": 50,
+      "duration": 6,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null,
+      "needs_monitor_quad": true,
+      "monitor_aspect_ratio": 2.45
+    },
+    {
+      "id": "close",
+      "path": "source_clips/11_close.mp4",
+      "start": 56,
+      "duration": 4,
+      "source_in": 0,
+      "source_kind": "generated_video",
+      "monitor_quad": null
+    }
+  ],
+  "speech": [
+    {
+      "id": "opening",
+      "speaker": "robot",
+      "provider": "elevenlabs",
+      "path": "dialogue/01_robot_opening.wav",
+      "start": 0.4,
+      "text": "What if a robot could adapt to signs that someone needs a gentler pace?",
+      "subtitle_position": "bottom",
+      "gain_db": 5.51,
+      "measured_duration": 4.086729166666666,
+      "subtitle_segments": [
+        {
+          "start": 0.0,
+          "end": 1.997,
+          "text": "What if a robot could adapt to signs"
+        },
+        {
+          "start": 1.997,
+          "end": 4.087,
+          "text": "that someone needs a gentler pace?"
+        }
+      ],
+      "alignment_path": "dialogue/01_robot_opening.alignment.json"
+    },
+    {
+      "id": "question",
+      "speaker": "robot",
+      "provider": "elevenlabs",
+      "path": "dialogue/02_robot_question.wav",
+      "start": 21.1,
+      "text": "Would you prefer a little more space and a gentler pace?",
+      "subtitle_position": "bottom",
+      "gain_db": 3.98,
+      "measured_duration": 2.8792916666666666,
+      "subtitle_segments": [
+        {
+          "start": 0.0,
+          "end": 2.879,
+          "text": "Would you prefer a little more space and a gentler pace?"
+        }
+      ],
+      "alignment_path": "dialogue/02_robot_question.alignment.json"
+    },
+    {
+      "id": "confirmation",
+      "speaker": "worker",
+      "provider": "elevenlabs",
+      "path": "dialogue/03_worker_confirmation.wav",
+      "start": 26.625,
+      "text": "Yes, please. It's been a long shift.",
+      "subtitle_position": "bottom",
+      "gain_db": -1.81,
+      "measured_duration": 2.13625,
+      "subtitle_segments": [
+        {
+          "start": 0.0,
+          "end": 2.136,
+          "text": "Yes, please. It's been a long shift."
+        }
+      ],
+      "alignment_path": "dialogue/03_worker_confirmation.alignment.json"
+    },
+    {
+      "id": "decision",
+      "speaker": "robot",
+      "provider": "elevenlabs",
+      "path": "dialogue/04_robot_decision.wav",
+      "start": 30.0,
+      "text": "Understood. I'll give you more room and move more gently.",
+      "subtitle_position": "bottom",
+      "gain_db": 6.25,
+      "measured_duration": 3.0186041666666665,
+      "subtitle_segments": [
+        {
+          "start": 0.0,
+          "end": 1.811,
+          "text": "Understood. I'll give you more room"
+        },
+        {
+          "start": 1.811,
+          "end": 3.019,
+          "text": "and move more gently."
+        }
+      ],
+      "alignment_path": "dialogue/04_robot_decision.alignment.json"
+    },
+    {
+      "id": "thanks",
+      "speaker": "worker",
+      "provider": "elevenlabs",
+      "path": "dialogue/05_worker_thanks.wav",
+      "start": 47.2,
+      "text": "Thank you. That's much better.",
+      "subtitle_position": "bottom",
+      "gain_db": -0.01,
+      "measured_duration": 1.6718541666666666,
+      "subtitle_segments": [
+        {
+          "start": 0.0,
+          "end": 1.672,
+          "text": "Thank you. That's much better."
+        }
+      ],
+      "alignment_path": "dialogue/05_worker_thanks.alignment.json"
+    },
+    {
+      "id": "explanation",
+      "speaker": "robot",
+      "provider": "elevenlabs",
+      "path": "dialogue/06_robot_explanation.wav",
+      "start": 50.4,
+      "text": "Human context informs the controller's priorities, while safety limits remain active.",
+      "subtitle_position": "bottom",
+      "gain_db": 5.53,
+      "measured_duration": 4.736875,
+      "subtitle_segments": [
+        {
+          "start": 0.0,
+          "end": 2.782,
+          "text": "Human context informs the controller's priorities,"
+        },
+        {
+          "start": 2.833,
+          "end": 4.737,
+          "text": "while safety limits remain active."
+        }
+      ],
+      "alignment_path": "dialogue/06_robot_explanation.alignment.json"
+    }
+  ],
+  "monitor_states": [
+    {
+      "status": "PERCEPTION",
+      "start": 9,
+      "end": 14,
+      "lines": [
+        "Visible cues: tired eyes, furrowed brow",
+        "Possible fatigue or stress",
+        "Estimate uncertain"
+      ],
+      "words_per_second": 3.8,
+      "line_pause": 0.3,
+      "footer": "Illustrative system summary"
+    },
+    {
+      "status": "ANALYSING",
+      "start": 14,
+      "end": 21,
+      "lines": [
+        "Checking motion and surrounding space",
+        "Person has slowed",
+        "More space is available"
+      ],
+      "words_per_second": 3.4,
+      "line_pause": 0.4,
+      "footer": "Illustrative system summary"
+    },
+    {
+      "status": "REASONING",
+      "start": 21,
+      "end": 29,
+      "lines": [
+        "LLM context interpretation",
+        "Possible need: less intrusive assistance",
+        "Proposed response: smoother motion, more space"
+      ],
+      "words_per_second": 3.7,
+      "line_pause": 0.3,
+      "footer": "Illustrative system summary"
+    },
+    {
+      "status": "DECIDED",
+      "start": 29,
+      "end": 37,
+      "lines": [
+        "Context confirmed by user",
+        "Send context to control module",
+        "Prioritise smoothness and comfortable spacing",
+        "Safety limits remain active"
+      ],
+      "words_per_second": 3.8,
+      "line_pause": 0.3,
+      "annotation": [
+        "Context-conditioned control",
+        "Training: context-dependent reward shaping",
+        "Hospital application proposed"
+      ],
+      "footer": "Illustrative system summary",
+      "architecture": "Perception \u2192 LLM context \u2192 PPO controller"
+    },
+    {
+      "status": "WORKING",
+      "start": 37,
+      "end": 56,
+      "lines": [
+        "Proposed motion",
+        "Smooth motion",
+        "Comfortable following distance"
+      ],
+      "words_per_second": 4.0,
+      "line_pause": 0.15,
+      "footer": "Illustrative system summary"
+    }
+  ],
+  "titles": [
+    {
+      "start": 0,
+      "end": 5.8,
+      "position": "top",
+      "lines": [
+        "Concept demonstration"
+      ],
+      "style": "small"
+    },
+    {
+      "start": 0.6,
+      "end": 5.8,
+      "position": "upper",
+      "lines": [
+        "Context-aware assistance"
+      ],
+      "style": "main"
+    },
+    {
+      "start": 56,
+      "end": 60,
+      "position": "center",
+      "lines": [
+        "Perceive context. Adapt assistance.",
+        "Proposed perception\u2013LLM\u2013PPO architecture",
+        "Robot behavior illustrated; real-world validation required"
+      ],
+      "style": "closing"
+    }
+  ],
+  "ambience": {
+    "path": "audio/soundbed_60s.wav",
+    "gain_db": 0,
+    "note": "Room tone and wheels mixed locally from saved ElevenLabs stems; listening review pending."
+  },
+  "music": null,
+  "implementation_audit_complete": true,
+  "assembly": {
+    "crf": 17,
+    "preset": "slow",
+    "audio_bitrate": "320k",
+    "loudness_i": -16,
+    "loudness_tp": -1.5,
+    "loudness_lra": 8
+  }
+}

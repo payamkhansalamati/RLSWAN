@@ -1,0 +1,27 @@
+{
+  "context_ppo_collision_steps": 0,
+  "context_ppo_headway_violation_steps": 103,
+  "context_ppo_ttc_violation_steps": 25,
+  "criterion": "Failure: at least one evaluation TTC proxy < 3.0 s. Safe for this illustrative comparison: zero TTC violations and zero collision steps (collision is gap <= collision_gap).",
+  "dimensions": [
+    1920,
+    1080
+  ],
+  "duration_seconds": 50.0,
+  "first_context_ppo_ttc_violation_time_s": 15.6,
+  "fps": 30,
+  "frame_count": 1500,
+  "measured_episode_progress_m": {
+    "context_aware_ppo": 276.4073858422319,
+    "risk_governed_context_aware_control": 334.70136207819587
+  },
+  "output": "animations/rendered/animation2_matched_comparison_presentation.mp4",
+  "pid_supervision_field": "hybrid_pid_active",
+  "playback": "30 fps; synchronized simulation-time frame midpoints",
+  "risk_governed_collision_steps": 0,
+  "risk_governed_headway_violation_steps": 0,
+  "risk_governed_ttc_violation_steps": 0,
+  "safety_filter_field": "hybrid_filter_active",
+  "status": "verified_ttc_violation_contrast",
+  "terminal_state_hold": "A policy ending early is held at its terminal state and explicitly labeled."
+}

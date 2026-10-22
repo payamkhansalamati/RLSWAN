@@ -1,0 +1,2 @@
+scenario,lead_profile,evaluation_seed,conditions_match,context_ppo_ttc_violation_steps,context_ppo_collision_steps,context_ppo_min_ttc_s,hybrid_context_pid_ttc_violation_steps,hybrid_context_pid_collision_steps,hybrid_context_pid_min_ttc_s,qualifies_for_ttc_comparison
+calm,constant,700,True,25,0,1.6396712108907772,0,0,18.951679401442604,True

@@ -1,0 +1,17 @@
+{
+  "dimensions": [
+    1920,
+    1080
+  ],
+  "duration_simulation_seconds": 250.0,
+  "fps": 30,
+  "frame_count": 7501,
+  "playback": "30 fps output; one simulation second per output second",
+  "profile_order": [
+    "constant",
+    "sinusoidal",
+    "braking",
+    "stop_and_go",
+    "random_smooth"
+  ]
+}

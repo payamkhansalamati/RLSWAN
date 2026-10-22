@@ -1,0 +1,344 @@
+Create a polished, approximately 60-second cinematic concept film demonstrating
+a mobile robot that perceives possible human fatigue and stress, interprets
+those observations using an LLM-based context module, and passes structured
+context to my context-aware PPO algorithm.
+
+My ElevenLabs API key is already configured in the local .env file.
+
+Execute the production workflow. Do not stop at instructions or a storyboard
+if the required generation tools are available.
+
+CORE STORY
+A hospital supply robot accompanies a healthcare worker.
+The robot notices visible cues that may indicate fatigue or stress.
+An LLM-based module interprets the observations with uncertainty.
+Structured context is passed to my control algorithm, which adjusts the
+relative importance of comfort-related objectives.
+The robot then follows more gently and allows more personal space.
+
+The robot’s monitor is central to the story:
+- A persistent status indicator appears in its top-left corner.
+- Brief explanatory text appears word by word below it.
+- Status labels progress through:
+  PERCEPTION → ANALYSING → REASONING → DECIDED → WORKING
+- Show readable decision summaries, not hidden internal chain-of-thought.
+
+FIRST ACTIONS
+1. Inspect relevant project documentation and code, particularly:
+   env_car_following.py, context_model.py, train.py, and config.py,
+   if those files exist.
+2. Identify how context and reward weights actually enter the implementation.
+3. Check current official ElevenLabs documentation and available account
+   capabilities for voices, speech, image/video generation, and lip-sync.
+4. Never display secrets.
+5. Preserve the existing controller and training code.
+6. Keep production files in a separate video_demo/ directory.
+
+TECHNICAL ACCURACY — ESSENTIAL
+Clearly distinguish the proposed architecture from implemented capabilities.
+
+Proposed architecture:
+Camera observations
+→ perception of visible behavioral/facial cues
+→ LLM-based context interpretation
+→ structured context and uncertainty
+→ context-aware reward/preference configuration
+→ PPO-based motion control
+
+Do not imply that changing reward weights alone immediately changes the
+actions of an already trained, fixed PPO policy.
+
+Inspect the actual implementation:
+- If the policy receives context or objective weights as inputs and was trained
+  across those conditions, show immediate adaptation through that conditioning.
+- If weights only change training rewards, present that as the learning
+  mechanism and label immediate robot behavior as the proposed application.
+- If another mechanism is implemented, describe it accurately.
+- Do not invent online retraining, a live LLM integration, or robot deployment.
+
+The LLM operates at the context/planning level, not as a replacement for the
+low-level controller.
+Independent safety constraints remain outside the LLM’s discretion.
+Do not imply a universal context-to-motion guarantee.
+
+FILM POSITIONING
+This is a cinematic concept demonstration of a proposed extension of simulation
+simulation work, not footage of validated stress recognition or deployed hardware.
+
+Use a subtle opening label:
+“Concept demonstration”
+
+End with:
+“Proposed perception–LLM–PPO architecture”
+“Robot behavior illustrated; real-world validation required”
+
+QUALITY PRIORITY
+Visual realism, consistent characters, natural dialogue, readable monitor text,
+and physically coherent motion are essential.
+
+Deliver:
+- Approximately 60 seconds, within one second where practical.
+- Landscape 16:9.
+- Minimum 1920 × 1080 delivery resolution.
+- Consistent frame rate.
+- High-quality H.264 MP4 and clear audio.
+- A clean version and an English-subtitled version.
+
+Do not substitute a slideshow, webpage animation, or panning still images for
+cinematic footage. If a required capability is unavailable, complete all
+independent work and identify the exact remaining blocker honestly.
+
+VISUAL WORLD
+A bright, contemporary hospital logistics corridor.
+Soft natural daylight, realistic shadows, restrained cinematic grading.
+No patients, confidential records, or real hospital branding.
+
+WORKER
+One fictional adult healthcare professional in teal scrubs.
+Natural facial texture, believable eyes and hands, subtle acting.
+The same face, hairstyle, clothing, and badge in all shots.
+
+Visible cues may include:
+- Slightly drooping eyelids.
+- A brief brow furrow.
+- A tired exhale.
+- A short pause and gentle rubbing of the temple.
+
+These are ambiguous cues, not proof of someone’s internal emotional state.
+Avoid exaggerated distress, medical diagnosis, or emotion-recognition certainty.
+
+ROBOT
+A compact white-and-teal wheeled supply robot.
+Secure supply compartment and a front-facing display.
+Practical industrial design with consistent proportions.
+No cartoon eyes or humanoid facial expressions.
+
+Create and reuse reference images for the worker, robot, and corridor.
+Prefer several coherent short shots to one uncontrolled minute-long generation.
+
+MONITOR DESIGN
+Use a dark, high-contrast interface with restrained teal accents.
+Place a persistent status chip at the TOP LEFT.
+Keep its position and typography identical across shots.
+
+Below the chip:
+- Reveal text word by word.
+- Use brief phrases and a subtle cursor.
+- Hold completed lines long enough to read.
+- Avoid a large scrolling wall of text.
+- Keep only a few lines visible at a time.
+
+Small persistent footer during monitor close-ups:
+“Illustrative system summary”
+
+Generate all monitor lettering as deterministic editing overlays.
+Do not rely on a video-generation model to produce readable text.
+Use perspective tracking or stable close-ups for clean compositing.
+
+The monitor explains inputs, uncertainty, and decisions.
+It must not claim to display literal hidden LLM thoughts.
+
+VOICE SELECTION
+Use ElevenLabs for all speech.
+If voice IDs are missing:
+- Retrieve available voices.
+- Audition short samples.
+- Select a warm, natural worker voice.
+- Select a distinct calm, clear robot voice.
+- Configure their IDs locally without revealing the API key.
+
+Choose licensed stock voices.
+No cloning or imitation of a real person.
+The robot sounds reassuring and composed, not metallic or theatrical.
+Use the robot voice for the brief explanatory narration.
+
+Generate final speech before locking shot timing.
+Preserve natural pauses and conversational turn-taking.
+Apply accurate lip-sync to worker speaking shots.
+
+STORYBOARD
+The following times are targets. Adjust shot boundaries to actual speech
+durations while keeping the film approximately 60 seconds.
+
+00–06 SECONDS — ESTABLISH
+Wide tracking shot of the worker walking with the supply robot following.
+Opening title:
+“Context-aware assistance”
+
+Robot voiceover:
+“What if a robot could adapt to signs that someone needs a gentler pace?”
+
+06–14 SECONDS — PERCEPTION
+Natural close-up of the worker slowing, exhaling, and briefly rubbing a temple.
+Cut to the robot monitor.
+
+Top-left status:
+PERCEPTION
+
+Word-by-word text:
+“Visible cues: tired eyes, furrowed brow”
+“Possible fatigue or stress”
+“Estimate uncertain”
+
+No numerical confidence score unless clearly justified by a real model.
+No biometric scanning spectacle or claim of certain emotion detection.
+
+14–21 SECONDS — ANALYSING
+Monitor close-up, intercut with the robot and worker.
+
+Top-left status:
+ANALYSING
+
+Text:
+“Checking motion and surrounding space”
+“Person has slowed”
+“More space is available”
+
+These are illustrative observations grounded in the visible scene.
+
+21–29 SECONDS — REASONING
+Top-left status:
+REASONING
+
+Text:
+“LLM context interpretation”
+“Possible need: less intrusive assistance”
+“Proposed response: smoother motion, more space”
+
+Robot asks:
+“Would you prefer a little more space and a gentler pace?”
+
+Worker replies:
+“Yes, please. It's been a long shift.”
+
+Show the worker’s response with natural, accurately synchronized lip movement.
+This confirmation complements the uncertain visual inference.
+
+29–38 SECONDS — DECIDED
+Top-left status:
+DECIDED
+
+Text:
+“Context confirmed by user”
+“Send context to control module”
+“Prioritise smoothness and comfortable spacing”
+“Safety limits remain active”
+
+Show a compact explanatory graphic:
+“Perception → LLM context → PPO controller”
+
+Show a short additional annotation reflecting the verified implementation:
+“Context-conditioned control”
+and, if supported by the project:
+“Training: context-dependent reward weights”
+
+Do not show fabricated numerical reward weights.
+Use actual reward-term names only if verified in the code.
+Do not imply the LLM directly controls the motors.
+
+Robot dialogue:
+“Understood. I'll give you more room and move more gently.”
+
+38–50 SECONDS — WORKING
+Top-left monitor status:
+WORKING
+
+Text:
+“Context-aware control active”
+“Smooth motion”
+“Comfortable following distance”
+
+The worker resumes walking.
+The robot gradually slows so the separation increases, then maintains the
+comfortable distance with smooth starts and stops.
+
+Show a side view that makes the distance change visually clear.
+No sudden reversing, drifting, floating wheels, or abrupt braking.
+Do not slow a person’s urgent task without their agreement.
+
+Worker, with a subtle relaxed smile:
+“Thank you. That's much better.”
+
+51–56 SECONDS — EXPLAIN
+Continue realistic footage.
+
+Robot voiceover:
+“Human context informs the controller’s priorities, while safety limits
+remain active.”
+
+Keep the distinction between context interpretation and motion control clear.
+
+56–60 SECONDS — CLOSE
+Wide shot of the worker and robot continuing together.
+
+Main title:
+“Perceive context. Adapt assistance.”
+
+Smaller text:
+“Proposed perception–LLM–PPO architecture”
+“Concept demonstration • Real-world validation required”
+
+AUDIO AND EDITING
+- Subtle corridor ambience and quiet wheel sounds.
+- Optional restrained music below dialogue.
+- No repeated notifications or loud typing sounds.
+- Remove unwanted generated dialogue before adding ElevenLabs speech.
+- Maintain clear speech, consistent loudness, and no clipping.
+- Keep status labels readable and visible in monitor shots.
+- Use subtitles that do not overlap the robot monitor text.
+
+PRODUCTION PROCESS
+1. Inspect code and document the supported context/control mechanism.
+2. Check tools, account access, and available credits.
+3. Prepare script, storyboard, continuity references, and shot prompts.
+4. Generate and select voice samples autonomously.
+5. Generate final dialogue and measure timing.
+6. Produce one worker speaking shot and one robot-monitor test shot.
+7. Inspect and refine those before generating the remaining footage.
+8. Generate remaining shots using consistent references.
+9. Apply worker lip-sync.
+10. Composite monitor states, word-by-word summaries, titles, and subtitles.
+11. Assemble, mix, export, and review the complete film.
+
+CREDENTIALS AND SPENDING
+- Read ELEVENLABS_API_KEY from the local environment or ignored .env.
+- Keep .env excluded from git.
+- Keep only placeholders in .env.example.
+- Never print secrets or put them in prompts, logs, frontend code, or media.
+- Use existing credits for this requested production.
+- Do not purchase credits, upgrade plans, or incur charges beyond the existing
+  balance without explicit authorization.
+- Estimate usage before expensive generation.
+- Cache successful assets and avoid unnecessary regeneration.
+- If credits are insufficient, preserve the completed assets and explain
+  exactly which remaining shots require additional resources.
+
+DELIVERABLES
+Inside video_demo/, save:
+- context_aware_robot_60s.mp4
+- context_aware_robot_60s_subtitled.mp4
+- subtitles.srt
+- Separate dialogue WAV files
+- Worker, robot, and environment reference images
+- Generated source clips
+- Script and shot prompts
+- Voice names and IDs
+- Editable timeline or reproducible assembly scripts
+- Notes distinguishing implemented features from proposed components
+- An honest list of remaining quality limitations, if any
+
+FINAL REVIEW
+Watch and listen to the complete export.
+Check:
+- Approximately 60-second duration.
+- Consistent face, robot design, lighting, and corridor.
+- Natural worker performance and accurate lip-sync.
+- Physically plausible motion and spacing.
+- Correct sequence of top-left status labels.
+- Readable word-by-word monitor text.
+- Accurate distinction between LLM summaries and controller execution.
+- No unsupported stress-detection or deployment claims.
+- Clear dialogue and polished editing.
+
+Start now. Make routine creative and implementation decisions autonomously.
+Ask only when a genuine blocker prevents further progress.

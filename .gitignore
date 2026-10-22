@@ -17,3 +17,31 @@ logs/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local production credentials
+.env
+.env.*
+!.env.example
+
+# Private presentation material (decks, PDFs, source reviews)
+presentation/
+*.pdf
+*.ppt
+*.pptx
+*.docx
+
+# Large generated media and packages
+*.zip
+*.mp4
+*.mp3
+*.wav
+animations/rendered/
+video_demo/audio/
+video_demo/concept_film/
+video_demo/dialogue/
+video_demo/refs/
+video_demo/review/
+video_demo/soundscape/
+video_demo/source_clips/
+video_demo/voices/
+video_demo/research/
