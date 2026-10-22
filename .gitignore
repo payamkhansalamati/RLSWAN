@@ -45,3 +45,6 @@ video_demo/soundscape/
 video_demo/source_clips/
 video_demo/voices/
 video_demo/research/
+# Showcase clip
+!docs/media/
+!docs/media/*.mp4
