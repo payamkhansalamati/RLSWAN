@@ -1,6 +1,8 @@
 # RLSWAN
 
-RLSWAN is a research simulation for context-aware longitudinal car-following.
+**[▶ Watch the concept demo (60 s)](docs/media/context_aware_assistance_concept_demo.mp4)**
+
+RLSWAN is a simulation for context-aware longitudinal car-following.
 It compares a fixed-gap PID controller, two Stable-Baselines3 PPO policies, and
 a hybrid context-PPO/PID controller in a synthetic Gymnasium environment.
 The driver context is generated and interpreted by repository code; it is not
