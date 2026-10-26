@@ -191,7 +191,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         from botocore.exceptions import BotoCoreError, ClientError
     except ImportError:
         print("Error: AWS registration requires boto3. Install it with: "
-              "python -m pip install boto3", file=sys.stderr)
+              "python -m pip install -r requirements-aws.txt", file=sys.stderr)
         return 2
 
     os.environ.setdefault("AWS_SDK_UA_APP_ID", "AWSSkill-SageMaker")

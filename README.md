@@ -209,6 +209,10 @@ Run this from the repository root using your configured AWS credentials. Add
 `--profile YOUR_PROFILE` to select a named AWS profile. The default inputs are
 `artifacts/models/context_ppo_seed0/final_model.zip` and its accompanying
 `vecnorm_stats.pkl`; train the model first if these local files are missing.
+The optional requirements include AWS Common Runtime (CRT), which Boto3 1.41+
+needs to use an existing `aws login` session. Use a recent Python version for
+that authentication method. If you installed the earlier dependency list and
+see a missing-CRT error, rerun the installation command above.
 
 Preview the request locally, without AWS credentials or the optional SDK:
 
