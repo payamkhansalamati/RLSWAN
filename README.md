@@ -195,6 +195,46 @@ python main.py all
 `all` uses the same independent checkpoint-selection and final-evaluation
 settings described above.
 
+## Register a model in AWS without uploading it
+
+Create a **metadata-only** SageMaker Model Registry entry for the saved final
+context PPO model:
+
+```bash
+python -m pip install -r requirements-aws.txt
+python scripts/register_sagemaker_model.py --region eu-central-1
+```
+
+Run this from the repository root using your configured AWS credentials. Add
+`--profile YOUR_PROFILE` to select a named AWS profile. The default inputs are
+`artifacts/models/context_ppo_seed0/final_model.zip` and its accompanying
+`vecnorm_stats.pkl`; train the model first if these local files are missing.
+
+Preview the request locally, without AWS credentials or the optional SDK:
+
+```bash
+python scripts/register_sagemaker_model.py --region eu-central-1 --dry-run
+```
+
+The command records the checkpoint and normalization hashes, filenames, and
+the Git revision/status at registration time. It creates or reuses the
+`RLSWAN-context-ppo-catalog` model group and registers a version with approval
+status `PendingManualApproval`. These records identify the local artifacts;
+they do not establish the original training run's complete provenance.
+
+[Model Registry has no registration fee](https://github.com/aws-samples/amazon-sagemaker-automatic-deploy-mlflow-model#3-running-costs).
+This command keeps all model files local and creates no S3 uploads, container
+images, training jobs, or endpoints. Keep the local model and normalization
+files backed up. Deploying later requires adding accessible model artifacts
+and an inference specification, which can introduce storage and compute costs.
+[AWS supports adding those deployment details after registration](https://aws.amazon.com/blogs/machine-learning/effectively-manage-foundation-models-for-generative-ai-applications-with-amazon-sagemaker-model-registry/).
+
+The caller needs `sagemaker:DescribeModelPackageGroup`,
+`sagemaker:CreateModelPackage` and, when creating the group,
+`sagemaker:CreateModelPackageGroup`. The script uses your existing identity;
+it does not create or change IAM roles. Use `--help` for custom artifact paths
+and model group names.
+
 ## Presentation animations
 
 The reproducible animation workflow, its generation commands, safety
